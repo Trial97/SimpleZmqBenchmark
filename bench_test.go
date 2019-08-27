@@ -7,12 +7,7 @@ import (
 	"time"
 )
 
-const (
-	endpoint  = "127.0.0.1:2567"
-	msg       = "Hello"
-	query     = `{"method":"ApierV2.SetBalance","params":[{"Tenant":"cgrates.org","Account":"1003","BalanceType":"*monetary","BalanceUUID":null,"BalanceID":"Bal2","Directions":null,"Value":10,"ExpiryTime":null,"RatingSubject":null,"Categories":null,"DestinationIds":null,"TimingIds":null,"Weight":10,"SharedGroups":null,"Blocker":null,"Disabled":null}],"id":0}`
-	noClients = 100
-)
+
 
 func helpBenchmark(s Server, c []Client, b *testing.B) {
 	clen := len(c)
