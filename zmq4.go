@@ -38,9 +38,9 @@ func (s *ZmqServer) LisenAndServe(endpoint string) (err error) {
 		}
 		go func(msg zmq4.Msg) {
 			if len(msg.Frames) >= 2 {
-				id := msg.Frames[0]
-				// fmt.Println(string(msg.Frames[1]))
-				err = s.socket.Send(zmq4.NewMsgFrom(id, msg.Frames[1]))
+				// id := msg.Frames[0]
+				// fmt.Println(string(msg.String()))
+				err = s.socket.Send(zmq4.NewMsgFrom(msg.Frames...))
 				if err != nil {
 					return
 				}
@@ -86,5 +86,38 @@ func (c *ZmqClient) Receive() ([]byte, error) {
 }
 
 func (c *ZmqClient) Close() error {
+	return c.socket.Close()
+}
+
+func NewZmqClient2(endpoint string, i int) (Client, error) {
+	dealer := zmq4.NewReq(context.Background())
+	err := dealer.Dial("tcp://" + endpoint)
+	if err != nil {
+		return nil, err
+	}
+	return &ZmqClient2{
+		socket: dealer,
+	}, nil
+
+}
+
+type ZmqClient2 struct {
+	socket zmq4.Socket
+}
+
+func (c *ZmqClient2) Send(b []byte) error {
+	return c.socket.Send(zmq4.NewMsgFrom(b))
+}
+
+func (c *ZmqClient2) Receive() ([]byte, error) {
+	msg, err := c.socket.Recv()
+	if err != nil {
+		return nil, err
+	}
+	// fmt.Printf("Router id:%s\n", string(msg.String()))
+	return msg.Frames[0], nil
+}
+
+func (c *ZmqClient2) Close() error {
 	return c.socket.Close()
 }

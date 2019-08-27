@@ -79,3 +79,72 @@ func BenchmarkZmq(b *testing.B) {
 		cl.Close()
 	}
 }
+
+func BenchmarkZmq2(b *testing.B) {
+	s := NewZmqServer()
+	go s.LisenAndServe(endpoint)
+	time.Sleep(time.Second)
+	var c []Client
+	for i := 0; i < noClients; i++ {
+		cl, err := NewZmqClient2(endpoint, i)
+		if err != nil {
+			b.Fatal(err)
+		}
+		c = append(c, cl)
+	}
+	// fmt.Println("Started ZMQ")
+	helpBenchmark(s, c, b)
+	// fmt.Println("Done ZMQ")
+	s.Close()
+	for _, cl := range c {
+		cl.Close()
+	}
+}
+
+// func BenchmarkPZmq(b *testing.B) {
+// 	s, err := NewPZmqServer()
+// 	if err != nil {
+// 		b.Fatal(err)
+// 	}
+// 	go s.LisenAndServe(endpoint)
+// 	time.Sleep(time.Second)
+// 	var c []Client
+// 	for i := 0; i < noClients; i++ {
+// 		cl, err := NewPZmqClient(endpoint)
+// 		if err != nil {
+// 			b.Fatal(err)
+// 		}
+// 		c = append(c, cl)
+// 	}
+// 	// fmt.Println("Started ZMQ")
+// 	helpBenchmark(s, c, b)
+// 	// fmt.Println("Done ZMQ")
+// 	s.Close()
+// 	for _, cl := range c {
+// 		cl.Close()
+// 	}
+// }
+
+// func BenchmarkPZmq2(b *testing.B) {
+// 	s, err := NewPZmqServer()
+// 	if err != nil {
+// 		b.Fatal(err)
+// 	}
+// 	go s.LisenAndServe(endpoint)
+// 	time.Sleep(time.Second)
+// 	var c []Client
+// 	for i := 0; i < noClients; i++ {
+// 		cl, err := NewPZmqClient2(endpoint)
+// 		if err != nil {
+// 			b.Fatal(err)
+// 		}
+// 		c = append(c, cl)
+// 	}
+// 	// fmt.Println("Started ZMQ")
+// 	helpBenchmark(s, c, b)
+// 	// fmt.Println("Done ZMQ")
+// 	s.Close()
+// 	for _, cl := range c {
+// 		cl.Close()
+// 	}
+// }
