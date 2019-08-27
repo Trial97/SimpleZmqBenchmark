@@ -148,3 +148,45 @@ func BenchmarkZmq2(b *testing.B) {
 // 		cl.Close()
 // 	}
 // }
+
+func BenchmarkCZmq(b *testing.B) {
+	s := NewCZmqServer()
+	go s.LisenAndServe(endpoint)
+	time.Sleep(time.Second)
+	var c []Client
+	for i := 0; i < noClients; i++ {
+		cl, err := NewCZmqClient(endpoint, i)
+		if err != nil {
+			b.Fatal(err)
+		}
+		c = append(c, cl)
+	}
+	// fmt.Println("Started ZMQ")
+	helpBenchmark(s, c, b)
+	// fmt.Println("Done ZMQ")
+	s.Close()
+	for _, cl := range c {
+		cl.Close()
+	}
+}
+
+func BenchmarkCZmq2(b *testing.B) {
+	s := NewCZmqServer()
+	go s.LisenAndServe(endpoint)
+	time.Sleep(time.Second)
+	var c []Client
+	for i := 0; i < noClients; i++ {
+		cl, err := NewCZmqClient2(endpoint, i)
+		if err != nil {
+			b.Fatal(err)
+		}
+		c = append(c, cl)
+	}
+	// fmt.Println("Started ZMQ")
+	helpBenchmark(s, c, b)
+	// fmt.Println("Done ZMQ")
+	s.Close()
+	for _, cl := range c {
+		cl.Close()
+	}
+}
